@@ -1,0 +1,38 @@
+div#main {
+	display: flex;
+	/* background-color: aquamarine; */
+}
+
+div#controls {
+	/* margin: 0; */
+	/* background-color: aqua; */
+	width: 100%;
+}
+
+
+/*https://www.w3schools.com/howto/howto_js_accordion.asp*/
+.collapsible {
+	background-color: #999;
+	width: 100%;
+	padding: 10;
+	border: none;
+}
+
+.active, .collapsible:hover {
+	background-color: #777;
+}
+
+.collapsible-content {
+	background-color: #ccc;
+	overflow: hidden;
+	max-height: 0;
+	transition: max-height 0.2s ease-out;
+}
+
+.ch4 {
+	width: 4ch;
+}
+
+.ch8 {
+	width: 8ch;
+}

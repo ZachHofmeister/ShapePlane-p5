@@ -1,0 +1,41 @@
+<html>
+	<head>
+		<title>ShapePlane p5 Testing</title>
+		<link href="style.css" rel="stylesheet" type="text/css" />
+		<script src="p5.js"></script>
+		<script src="sketch.js"></script>
+	</head>
+	<body>
+		<h1>ShapePlane</h1>
+		<div id="main">
+			<div id="sketch">
+				<!--Sketch goes here-->
+			</div>
+			<div id="controls">
+				<!-- Color controls -->
+				<button class="collapsible">Color</button>
+				<div class="collapsible-content">
+					<label for="baseColorText">Base Color:</label>
+					<input id="baseColorText" var="baseColor" type="text" class="ch8">
+					<input id="baseColorPicker" var="baseColor" type="color">
+					<br>
+					<label for="hueSpacingText">HSB Spacing:</label>
+					<input id="hueSpacing" type="text" class="ch4">
+					<input id="satSpacing" type="text" class="ch4">
+					<input id="briSpacing" type="text" class="ch4">
+				</div>
+
+				<button class="collapsible">Controls 2</button>
+				<div class="collapsible-content">
+					This can be hidden too.
+				</div>
+
+				<button class="collapsible">Controls 3</button>
+				<div class="collapsible-content">
+					This can be hidden three.
+				</div>
+			</div>
+		</div>
+		<script src="anims.js"></script>
+	</body>
+</html>
