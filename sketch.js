@@ -1,11 +1,11 @@
 var size = 10;
 var shape = 0;
-var colorCount = 3;
+var colorCount = 5;
 var s3;
 var perlinSeed;
 var strokeWidth = 1;
-var baseColor;
-var startHue = 50, startSat = 50, startBri = 50;
+var baseColor = "#FFFFFF";
+var spaceHue = 10, spaceSat = 10, spaceBri = 10;
 var strokeHue = 20, strokeSat = 20, strokeBri = 20;
 
 var colors = [];
@@ -15,7 +15,16 @@ var shapes = [];
 //https://forum.processing.org/two/discussion/27844/p5-js-export-to-svg.html
 
 function updateVar () {
-	window[this.attributes.var.nodeValue] = this.value;
+	// console.log("update var");
+	window[this.attributes.var.nodeValue] = this.value; //update this element's value
+	//update linked elemtents if they exist
+	let thisElem = document.getElementById(this.id);
+	if (thisElem.hasAttribute("linked")) {
+		this.attributes.linked.nodeValue.split(",").forEach(linkID => {
+			document.getElementById(linkID).value = this.value;
+		});
+	}
+	drawPlane();
 }
 
 function setup() {
@@ -30,9 +39,42 @@ function setup() {
 	s3 = Math.sqrt(3);
 	// lpShape = -1;
 
+	let linked = {} //key-value list to hold any linked controls. Used to update one input when another linked one updates.
+	/* Example
+		linked = {"varName": ["textField", "slider"], ...}
+	*/
 	//Setup control inputs to update their variables
-	document.querySelectorAll("input").forEach(input=>{
-		input.addEventListener("input", updateVar);
+	document.querySelectorAll("input.updateVar").forEach(input=>{
+		//Initialize the inputs with the current variable values
+		let varName;
+		try {
+			varName = input.attributes.var.nodeValue;
+			input.value = window[varName];
+		} catch (error) {
+			console.error("Error on input of id " + input.id + ": " + error);
+		}
+		input.addEventListener("change", updateVar); //Update when "done" changing (click off or enter)
+		if (input.classList.contains("linked")) {
+			if (!linked[varName]) {
+				linked[varName] = [];
+			}
+			linked[varName].push(input.id);
+		}
+		// input.addEventListener("input", updateVar); //Alternate way, update on EVERY change (mid-typing)
+	});
+
+	//Setup linked controls
+	Object.entries(linked).forEach(([_, list]) => {
+		list.forEach(elemID => {
+			let linkElem = document.getElementById(elemID);
+			let otherList = [];
+			list.forEach(otherID => {
+				if (otherID != elemID) {
+					otherList.push(otherID);
+				}
+			});
+			linkElem.setAttribute("linked", otherList);
+		});
 	});
 
 	// console.log();
@@ -121,18 +163,11 @@ function drawPlane() {
 function genColors(count) {
 	colors = [];
 	
-	startHue = round(startHue);
-	startSat = round(startSat);
-	startBri = round(startBri);
+	let startHue = hue(baseColor);
+	let startSat = saturation(baseColor);
+	let startBri = brightness(baseColor);
+	//start with random HSB values for any value that is negative
 	colors.push(color(startHue >= 0 ? startHue : random(0,360), startSat >= 0 ? startSat : random(0, 100), startBri >= 0 ? startBri : random(0,100)));
-	
-	let spacingH;
-	if (count != 0) {
-	    spacingH = 360 / count;
-	} else {
-	    spacingH = 360;
-	}
-	let satSpacing = 10, briSpacing = 10;
 	
 	let iHue = hue(colors.at(0));
 	let hueCurrent = iHue;
@@ -144,16 +179,22 @@ function genColors(count) {
 	let mode = 0;
 	switch(mode) {
 	    case 0 : //Intermediate
+			let spacingH;
+			if (count != 0) {
+				spacingH = 360 / count;
+			} else {
+				spacingH = 360;
+			}
 	        for (let i = 1; i < count; i++) {
 	            hueCurrent = iHue + i * spacingH;
 	            while(hueCurrent > 360) {
 		               hueCurrent -= 360;
 		           }
-	            satCurrent = iSat - i * satSpacing;
+	            satCurrent = iSat - i * spaceSat;
 	            while(satCurrent < 0) {
 		               satCurrent += 100;
 		           }
-	            briCurrent = iBri - i * briSpacing;
+	            briCurrent = iBri - i * spaceBri;
 	            while(briCurrent < 0) {
 		               briCurrent += 100;
 		           }
